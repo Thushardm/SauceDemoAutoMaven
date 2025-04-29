@@ -1,9 +1,15 @@
 pipeline {
-    agent any  // Use any available agent
+    agent any
 
     tools {
-        maven 'Maven'  // Ensure this matches the name configured in Jenkins
+        maven 'Maven'  // Ensure this matches Jenkins' Maven installation name
     }
+
+    environment {
+        // Add DISPLAY variable in case it's needed by xvfb-run or GUI processes
+        DISPLAY = ':99'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -13,26 +19,23 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'  // Run Maven build
+                sh 'mvn clean package'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'  // Run unit tests
+                // Use xvfb-run to emulate a display for Chrome in headless environments
+                sh 'xvfb-run -a mvn test'
             }
         }
 
-        
-        
-       
         stage('Run Application') {
             steps {
-                // Start the JAR application
-                sh 'mvn exec:java -Dexec.mainClass=com.example.App'           }
+                // Run your main class (should be safe now with Chrome headless setup)
+                sh 'xvfb-run -a mvn exec:java -Dexec.mainClass=com.example.App'
+            }
         }
-
-        
     }
 
     post {
