@@ -33,7 +33,7 @@ pipeline {
         stage('Run Application') {
             steps {
                 // Run your main class (should be safe now with Chrome headless setup)
-                sh 'xvfb-run -a mvn exec:java -Dexec.mainClass=com.example.App'
+                sh 'mvn exec:java -Dexec.mainClass=com.example.App'
             }
         }
     }
