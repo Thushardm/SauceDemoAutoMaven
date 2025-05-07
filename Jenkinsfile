@@ -2,18 +2,14 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven'  // Ensure this matches Jenkins' Maven installation name
-    }
-
-    environment {
-        // Add DISPLAY variable in case it's needed by xvfb-run or GUI processes
-        DISPLAY = ':99'
+        maven 'Maven'  // Replace with actual tool names from Jenkins configuration
+        jdk 'JDK'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/Thushardm/SauceDemoAutoMaven.git'
+                checkout scm
             }
         }
 
@@ -25,25 +21,23 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Use xvfb-run to emulate a display for Chrome in headless environments
                 sh 'mvn test'
             }
         }
 
-        stage('Run Application') {
+        stage('Archive Artifacts') {
             steps {
-                // Run your main class (should be safe now with Chrome headless setup)
-                sh 'mvn exec:java -Dexec.mainClass=com.example.App'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
     }
 
     post {
         success {
-            echo 'Build and deployment successful!'
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Build failed!'
+            echo 'Pipeline failed!'
         }
     }
 }
