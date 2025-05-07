@@ -26,7 +26,7 @@ pipeline {
         stage('Test') {
             steps {
                 // Use xvfb-run to emulate a display for Chrome in headless environments
-                sh 'xvfb-run -a mvn test'
+                sh 'mvn test'
             }
         }
 
